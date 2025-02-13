@@ -4,8 +4,8 @@ import java.util.Calendar
 import java.util.Date
 
 data class Customer(val id: Int, val name: String, val email: String, val createdAt: Date) {
-    fun isNewCustomer(): Boolean {
-        val today = Calendar.getInstance()
+    fun isNewCustomer(customCalendar : Calendar = Calendar.getInstance()): Boolean {
+        val today = customCalendar
         val createdAtCalendar = Calendar.getInstance().apply {
             time = createdAt
         }

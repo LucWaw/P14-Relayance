@@ -3,6 +3,9 @@ import com.android.build.gradle.BaseExtension
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.composePlugins)
+    alias(libs.plugins.daggerHilt)
+    id("kotlin-kapt")
     id("jacoco")
 }
 tasks.withType<Test> {
@@ -11,7 +14,12 @@ tasks.withType<Test> {
         excludes = listOf("jdk.internal.*")
     }
 }
+
+
+
+
 android {
+
     namespace = "com.kirabium.relayance"
     compileSdk = 34
 
@@ -26,7 +34,10 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        //testInstrumentationRunner = "com.kirabium.relayance.test.HiltTestRunner"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -92,7 +103,39 @@ val jacocoTestReport by tasks.registering(JacocoReport::class) {
 }
 
 
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+kapt {
+    correctErrorTypes = true
+}
 dependencies {
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
+    androidTestImplementation(libs.androidx.espresso.contrib)
+    androidTestImplementation (libs.androidx.espresso.intents)
+    //JUnit5
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.console)
+    testImplementation(libs.junit.vintage.engine)
+    testImplementation(libs.junit.jupiter.params)
+
+    testImplementation(libs.assertj.core)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    androidTestImplementation(libs.hilt.android.testing)
+
+
+    //Cucumber
+    androidTestUtil(libs.androidx.orchestrator)
+    androidTestImplementation(libs.cucumber.junit)
+    androidTestImplementation(libs.cucumber.android)
+    androidTestImplementation(libs.cucumber.java)
+    androidTestImplementation(libs.cucumber.android.hilt)
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -111,6 +154,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.junit.ktx)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
